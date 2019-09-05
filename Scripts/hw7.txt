@@ -1,0 +1,87 @@
+eval (Plus e1 e2) m =
+  let e1' = eval e1 m
+      e2' = eval e2 m
+  in
+   VInt $ asInt e1' + asInt e2' -- means the same as VInt (asInt e1' + asInt e2')
+
+ae1 =
+ae1' =
+
+af1 =
+af1' =
+
+-- } if we do ae1 == af1' in ghci which compares VInt and VBool, it will still return either 
+	true or false using the original Equals operation (the longer one).
+
+eval (Equals' e1 e2) = 
+-- } this is sufficient, but the OTHER equals operator really goes deep into VInt vs VBool 
+	and will make sure that you're comparing VInt and VInt or VBool and VBool.
+	
+exec Empty m = m
+
+exec (VarDecl vName valeExpr) m = (vName, valExpr):m
+-- vs
+exec (VarDecl vName valeExpr) m = (vName, (eval valExpr m)):m
+-- } in the first case, it does not evaluate what valExpr is and it just puts it in there.
+	for example, what if valExpr is 5+6. We need to be able to store 11; not 5+6.
+
+t0 =
+t1 = 
+
+exec (Assign vName valExpr) m = 
+
+t2 = 
+
+exec (If condExpr tStm fStm) m = 
+
+t3 = 
+-- vs
+t3' =
+-- } 
+
+exec (While condEx wStm) m =
+-- } to recurse through the while loop, memory has to change in the statement, where m no
+	longer has its previous value, but an updated value m'
+{-
+	var = 4
+	while a < 10
+		a = a*2
+-}
+t4 = 
+-- * exec t4 m2
+
+exec (Block []) m = m
+exec (Block wStmts) m = 
+
+t5 =
+t5' =
+-- } so what if there's a block within a block? How will scoping work?
+{-
+	int a = 0
+	{
+		a = 7
+		int a = 10;
+	}
+	x = a + 6;
+-} 
+-- } What will be the value of x?
+-- } in c++, it should be 13. a actually gets updated within the block, then when theres 
+-- } a declaration "int a = 10," theres a new variable getting declared in a new
+-- } spot in memory, so when the inner block ends, that new a is deleted, but the
+-- } previous a will still be 7 because it was updated. Remember, when we update a value
+-- } in our program, it goes in memory and finds the first "a" in the memory stack. a = 7
+-- } will update the "a" outside the inner block, because it will be the first "a" it finds.
+-- } when int a gets declared, it will now be the first "a" in the memory stack.
+
+execBlockScope (Block []) m = m
+execBlockScope (Block wStmts) m = 
+
+popTillMarker :: Memory -> Memory
+popTillMarker m = 
+
+assignmentHelper :: 
+assignmentHelper =
+-- } this is what actually updates the value of the memory. If the memory is outside the
+	the current scope, it will still update
+-- * assignmentHelper m1 "a" (VInt 88)
+-- * lookup $ assignmentHelper m1 "a" (VInt 88)
